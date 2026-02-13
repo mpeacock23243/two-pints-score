@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Two Pints &amp; A Score</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+  </head>
+  <body>
+    <div class="container">
+      <header class="hero">
+        <img
+          class="logo"
+          src="{{ url_for('static', filename='logo.png') }}"
+          alt="Two Pints &amp; A Score logo"
+        />
+        <h1 class="appname">Two Pints &amp; A Score</h1>
+        <p class="tagline">Two opinions. One perfect pint.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, msg in messages %}
+              <div class="toast {{category}}">
+                <span class="dot"></span>
+                <span>{{ msg }}</span>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </header>
+
+      <section class="card">
+        <h2>Add a rating</h2>
+
+        <form class="form" method="post" action="{{ url_for('add') }}" enctype="multipart/form-data">
+          <div class="top-grid">
+            <label>
+              Person
+              <input name="person" placeholder="Matt / Emma-Grace / Both" value="Matt" />
+            </label>
+
+            <label>
+              Pub
+              <input name="pub_name" placeholder="The Griffon" />
+            </label>
+
+            <label>
+              City
+              <input name="city" placeholder="Charleston" />
+            </label>
+          </div>
+
+          <div class="rating-grid">
+            <div class="sliders">
+              <div class="slider-row">
+                <span class="slider-label">Presentation (P)</span>
+                <input type="range" min="0" max="10" value="8" name="presentation" class="slider" data-label="pVal" />
+                <span class="pill" id="pVal">8</span>
+              </div>
+
+              <div class="slider-row">
+                <span class="slider-label">Coldness (C)</span>
+                <input type="range" min="0" max="10" value="9" name="coldness" class="slider" data-label="cVal" />
+                <span class="pill" id="cVal">9</span>
+              </div>
+
+              <div class="slider-row">
+                <span class="slider-label">Head (H)</span>
+                <input type="range" min="0" max="10" value="8" name="head" class="slider" data-label="hVal" />
+                <span class="pill" id="hVal">8</span>
+              </div>
+
+              <div class="slider-row">
+                <span class="slider-label">Taste (T)</span>
+                <input type="range" min="0" max="10" value="9" name="taste" class="slider" data-label="tVal" />
+                <span class="pill" id="tVal">9</span>
+              </div>
+            </div>
+
+            <div class="score-card">
+              <div class="score-title">Estimated Score</div>
+              <div class="score" id="scorePreview">—</div>
+              <div class="score-note">Auto-calculated (same formula as saved).</div>
+            </div>
+          </div>
+
+          <div class="extras-grid">
+            <label>
+              Photo (optional)
+              <input type="file" name="photo" accept="image/*" />
+              <div class="hint">Attach a pic of the pour for posterity 🍻</div>
+            </label>
+
+            <label class="notes">
+              Notes
+              <textarea name="notes" rows="3" placeholder="Creamy head, perfect temp, slight metallic finish..."></textarea>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn primary">Save rating</button>
+            <button type="button" class="btn ghost" id="resetBtn">Reset</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="row">
+          <h2>History</h2>
+          <div class="muted">Showing up to 200</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>When</th>
+                <th>Person</th>
+                <th>Pub</th>
+                <th>City</th>
+                <th class="center">P</th>
+                <th class="center">C</th>
+                <th class="center">H</th>
+                <th class="center">T</th>
+                <th class="center">Score</th>
+                <th class="center">Photo</th>
+                <th>Notes</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in rows %}
+              <tr>
+                <td class="mono">{{ r["created_at"] }}</td>
+                <td>{{ r["person"] }}</td>
+                <td>{{ r["pub_name"] or "" }}</td>
+                <td>{{ r["city"] or "" }}</td>
+                <td class="center">{{ r["presentation"] }}</td>
+                <td class="center">{{ r["coldness"] }}</td>
+                <td class="center">{{ r["head"] }}</td>
+                <td class="center">{{ r["taste"] }}</td>
+                <td class="center"><span class="badge">{{ r["score"] }}</span></td>
+                <td class="center">
+                  {% if r["photo_path"] %}
+                    <a
+                      href="{{ url_for('uploads', filename=r['photo_path']) }}"
+                      target="_blank"
+                      class="thumb-link"
+                      title="Open photo"
+                    >
+                      <img
+                        class="thumb"
+                        src="{{ url_for('uploads', filename=r['photo_path']) }}"
+                        alt="rating photo"
+                        loading="lazy"
+                      />
+                    </a>
+                  {% else %}
+                    <span class="muted">—</span>
+                  {% endif %}
+                </td>
+                <td class="notes-cell">{{ r["notes"] or "" }}</td>
+                <td class="right">
+                  <a class="link" href="{{ url_for('edit', rating_id=r['id']) }}">Edit</a>
+                  <form method="post" action="{{ url_for('delete', rating_id=r['id']) }}" style="display:inline">
+                    <button class="link danger" type="submit" onclick="return confirm('Delete this entry?')">Delete</button>
+                  </form>
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="12" class="muted center">No ratings yet — add your first pint 🍺</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer class="footer muted">Local MVP • SQLite • Flask</footer>
+    </div>
+  </body>
+</html>

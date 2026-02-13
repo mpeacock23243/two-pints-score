@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Edit • Two Pints &amp; A Score</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+  </head>
+  <body>
+    <div class="container">
+      <header class="hero compact">
+        <div class="hero-row">
+          <img
+            class="logo small"
+            src="{{ url_for('static', filename='logo.png') }}"
+            alt="Two Pints &amp; A Score logo"
+          />
+          <div>
+            <h1 class="appname">Edit rating</h1>
+            <p class="tagline"><a class="link" href="{{ url_for('index') }}">← Back</a></p>
+          </div>
+        </div>
+      </header>
+
+      <section class="card">
+        <form
+          class="form"
+          method="post"
+          action="{{ url_for('edit_save', rating_id=row['id']) }}"
+          enctype="multipart/form-data"
+        >
+          <div class="top-grid">
+            <label>
+              Person
+              <input name="person" value="{{ row['person'] }}" />
+            </label>
+
+            <label>
+              Pub
+              <input name="pub_name" value="{{ row['pub_name'] or '' }}" />
+            </label>
+
+            <label>
+              City
+              <input name="city" value="{{ row['city'] or '' }}" />
+            </label>
+          </div>
+
+          <div class="rating-grid">
+            <div class="sliders">
+              <div class="slider-row">
+                <span class="slider-label">Presentation (P)</span>
+                <input type="range" min="0" max="10" value="{{ row['presentation'] }}" name="presentation" class="slider" data-label="pVal" />
+                <span class="pill" id="pVal">{{ row['presentation'] }}</span>
+              </div>
+
+              <div class="slider-row">
+                <span class="slider-label">Coldness (C)</span>
+                <input type="range" min="0" max="10" value="{{ row['coldness'] }}" name="coldness" class="slider" data-label="cVal" />
+                <span class="pill" id="cVal">{{ row['coldness'] }}</span>
+              </div>
+
+              <div class="slider-row">
+                <span class="slider-label">Head (H)</span>
+                <input type="range" min="0" max="10" value="{{ row['head'] }}" name="head" class="slider" data-label="hVal" />
+                <span class="pill" id="hVal">{{ row['head'] }}</span>
+              </div>
+
+              <div class="slider-row">
+                <span class="slider-label">Taste (T)</span>
+                <input type="range" min="0" max="10" value="{{ row['taste'] }}" name="taste" class="slider" data-label="tVal" />
+                <span class="pill" id="tVal">{{ row['taste'] }}</span>
+              </div>
+            </div>
+
+            <div class="score-card">
+              <div class="score-title">Estimated Score</div>
+              <div class="score" id="scorePreview">—</div>
+              <div class="score-note">Recomputed on save.</div>
+            </div>
+          </div>
+
+          <div class="extras-grid">
+            <label>
+              Replace photo (optional)
+              <input type="file" name="photo" accept="image/*" />
+              <div class="hint">Uploading a new photo will replace the old one.</div>
+
+              {% if row["photo_path"] %}
+                <div class="current-photo">
+                  <a class="link" target="_blank" href="{{ url_for('uploads', filename=row['photo_path']) }}">View current photo</a>
+                </div>
+              {% endif %}
+            </label>
+
+            <label class="notes">
+              Notes
+              <textarea name="notes" rows="3">{{ row["notes"] or "" }}</textarea>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn primary">Save changes</button>
+            <a class="btn ghost" href="{{ url_for('index') }}">Cancel</a>
+          </div>
+        </form>
+      </section>
+    </div>
+  </body>
+</html>
