@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Create Account • Two Pints &amp; A Score</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="hero compact">
+        <div class="hero-row">
+          <img class="logo small" src="{{ url_for('static', filename='logo.png') }}" alt="logo" />
+          <div>
+            <h1 class="appname">Create account</h1>
+            <p class="tagline"><a class="link" href="{{ url_for('login') }}">← Back to login</a></p>
+          </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, msg in messages %}
+              <div class="toast {{category}}">
+                <span class="dot"></span>
+                <span>{{ msg }}</span>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </header>
+
+      <section class="card auth-card">
+        <h2>Sign up</h2>
+
+        <form class="form" method="post" action="{{ url_for('register_post') }}">
+          <label>
+            Username
+            <input name="username" autocomplete="username" placeholder="matt / emma-grace" required />
+            <div class="hint">At least 3 characters. Lowercase is easiest.</div>
+          </label>
+
+          <label>
+            Password
+            <input type="password" name="password" autocomplete="new-password" required />
+            <div class="hint">At least 6 characters.</div>
+          </label>
+
+          <div class="actions auth-actions">
+            <button type="submit" class="btn primary">Create account</button>
+            <a class="btn ghost" href="{{ url_for('login') }}">Cancel</a>
+          </div>
+        </form>
+      </section>
+    </div>
+  </body>
+</html>

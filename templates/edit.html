@@ -18,7 +18,11 @@
           />
           <div>
             <h1 class="appname">Edit rating</h1>
-            <p class="tagline"><a class="link" href="{{ url_for('index') }}">← Back</a></p>
+            <p class="tagline">
+              <a class="link" href="{{ url_for('index') }}">← Back</a>
+              <span class="muted">•</span>
+              Logged in as <strong>{{ username }}</strong>
+            </p>
           </div>
         </div>
       </header>
@@ -77,7 +81,6 @@
             <div class="score-card">
               <div class="score-title">Estimated Score</div>
               <div class="score" id="scorePreview">—</div>
-              <div class="score-note">Recomputed on save.</div>
             </div>
           </div>
 
@@ -85,7 +88,7 @@
             <label>
               Replace photo (optional)
               <input type="file" name="photo" accept="image/*" />
-              <div class="hint">Uploading a new photo will replace the old one.</div>
+              <div class="hint">Uploading a new photo replaces the old one.</div>
 
               {% if row["photo_path"] %}
                 <div class="current-photo">

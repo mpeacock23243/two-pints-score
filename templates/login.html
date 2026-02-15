@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Login • Two Pints &amp; A Score</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="hero compact">
+        <div class="hero-row">
+          <img class="logo small" src="{{ url_for('static', filename='logo.png') }}" alt="logo" />
+          <div>
+            <h1 class="appname">Two Pints &amp; A Score</h1>
+            <p class="tagline">Two opinions. One perfect pint.</p>
+          </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, msg in messages %}
+              <div class="toast {{category}}">
+                <span class="dot"></span>
+                <span>{{ msg }}</span>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </header>
+
+      <section class="card auth-card">
+        <h2>Log in</h2>
+
+        <form class="form" method="post" action="{{ url_for('login_post') }}">
+          <label>
+            Username
+            <input name="username" autocomplete="username" placeholder="matt / emma-grace" required />
+          </label>
+
+          <label>
+            Password
+            <input type="password" name="password" autocomplete="current-password" required />
+          </label>
+
+          <div class="actions auth-actions">
+            <button type="submit" class="btn primary">Log in</button>
+            <a class="btn ghost" href="{{ url_for('register') }}">Create account</a>
+          </div>
+
+          <div class="muted tiny">
+            Tip: use simple usernames like <span class="mono">matt</span> and <span class="mono">emma</span>.
+          </div>
+        </form>
+      </section>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Leaderboard • Two Pints &amp; A Score</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="hero compact">
+        <div class="hero-row">
+          <img class="logo small" src="{{ url_for('static', filename='logo.png') }}" alt="logo" />
+          <div>
+            <h1 class="appname">Leaderboard</h1>
+            <p class="tagline">
+              <a class="link" href="{{ url_for('index') }}">← My ratings</a>
+              <span class="muted">•</span>
+              Logged in as <strong>{{ username }}</strong>
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <section class="card">
+        <div class="row">
+          <h2>Best pints (all ratings)</h2>
+          <form method="post" action="{{ url_for('logout') }}">
+            <button class="link danger" type="submit">Logout</button>
+          </form>
+        </div>
+
+        <form class="filters" method="get" action="{{ url_for('leaderboard') }}">
+          <label>
+            Pub search
+            <input name="q" value="{{ q }}" placeholder="e.g., Griffon" />
+          </label>
+
+          <label>
+            City (exact)
+            <input name="city" value="{{ city }}" placeholder="Charleston" />
+          </label>
+
+          <label>
+            Min ratings
+            <input name="min" type="number" min="1" max="999" value="{{ min_ratings }}" />
+          </label>
+
+          <div class="filter-actions">
+            <button class="btn primary" type="submit">Apply</button>
+            <a class="btn ghost" href="{{ url_for('leaderboard') }}">Reset</a>
+          </div>
+        </form>
+
+        <div class="table-wrap" style="margin-top: 12px;">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Pub</th>
+                <th>City</th>
+                <th class="center">Avg</th>
+                <th class="center">Best</th>
+                <th class="center">Ratings</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in pubs %}
+              <tr>
+                <td class="mono">{{ loop.index }}</td>
+                <td><strong>{{ p["pub_name"] }}</strong></td>
+                <td class="muted">{{ p["city"] }}</td>
+                <td class="center"><span class="badge">{{ p["avg_score"] }}</span></td>
+                <td class="center">{{ p["best_score"] }}</td>
+                <td class="center">{{ p["ratings"] }}</td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="6" class="muted center">No results. Try lowering “Min ratings” or clearing filters.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="muted tiny" style="margin-top: 10px;">
+          Tip: Use <span class="mono">Min ratings = 2+</span> to reduce “one-time lucky pints.”
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

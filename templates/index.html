@@ -18,6 +18,16 @@
         <h1 class="appname">Two Pints &amp; A Score</h1>
         <p class="tagline">Two opinions. One perfect pint.</p>
 
+        <div class="topbar">
+          <div class="muted">Logged in as <strong>{{ username }}</strong></div>
+          <div class="topbar-actions">
+            <a class="link" href="{{ url_for('leaderboard') }}">Leaderboard</a>
+            <form method="post" action="{{ url_for('logout') }}" style="display:inline">
+              <button class="link danger" type="submit">Logout</button>
+            </form>
+          </div>
+        </div>
+
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             {% for category, msg in messages %}
@@ -37,7 +47,7 @@
           <div class="top-grid">
             <label>
               Person
-              <input name="person" placeholder="Matt / Emma-Grace / Both" value="Matt" />
+              <input name="person" placeholder="Matt / Emma-Grace" value="{{ username|default('') }}" />
             </label>
 
             <label>
@@ -81,7 +91,6 @@
             <div class="score-card">
               <div class="score-title">Estimated Score</div>
               <div class="score" id="scorePreview">—</div>
-              <div class="score-note"></div>
             </div>
           </div>
 
@@ -89,7 +98,7 @@
             <label>
               Photo (optional)
               <input type="file" name="photo" accept="image/*" />
-              <div class="hint">Attach a pic of the pour for posterity 🍻</div>
+              <div class="hint">Add a photo of the pint 🍺</div>
             </label>
 
             <label class="notes">
@@ -107,7 +116,7 @@
 
       <section class="card">
         <div class="row">
-          <h2>History</h2>
+          <h2>My History</h2>
           <div class="muted">Showing up to 200</div>
         </div>
 
@@ -178,7 +187,7 @@
         </div>
       </section>
 
-      <footer class="footer muted">© 2026 • Created by Matt</footer>
+      <footer class="footer muted">Created by Matt 🍺</footer>
     </div>
   </body>
 </html>
